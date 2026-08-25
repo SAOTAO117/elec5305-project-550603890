@@ -6,5 +6,4 @@ This project investigates the use of Wiener filtering for speech enhancement. Th
 
 The project will be implemented in MATLAB. The original and filtered speech will be compared using audio playback, waveforms and spectrograms.
 
-## Project Proposal
-[View Project Proposal] (weitaoshi550603890-5305proposal.pdf)
+
