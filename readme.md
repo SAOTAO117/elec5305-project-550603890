@@ -9,7 +9,7 @@ Wiener Filtering for Speech Enhancement
 Full Name: Weitao Shi  
 Student ID (SID): 550603890  
 GitHub Username: SAOTAO117  
-GitHub Project Link: <https://github.com/SAOTAO117/elec5305-project-550603890.git>
+GitHub Project Link: [(https://saotao117.github.io/elec5305-project-550603890/)]
 
 ## 3. Project Overview
 
