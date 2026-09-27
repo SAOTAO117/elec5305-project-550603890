@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ELEC5305 Project Proposal - Weitao Shi</title>
+  <style>
+    body {
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 0 24px 40px;
+      color: #000;
+      background: #fff;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    header {
+      margin-bottom: 36px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+    }
+
+    .document-type {
+      margin: 0;
+      text-align: center;
+    }
+
+    h2 {
+      margin: 30px 0 10px;
+      font-size: 20px;
+    }
+
+    p {
+      margin: 0 0 14px;
+      text-align: justify;
+    }
+
+    a { color: #0645ad; }
+
+    .student-info {
+      display: grid;
+      grid-template-columns: 175px 1fr;
+      margin: 0;
+    }
+
+    .student-info dt { font-weight: bold; }
+    .student-info dd { margin: 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 16px;
+    }
+
+    th, td {
+      padding: 8px 10px;
+      border: 1px solid #777;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: #eee; }
+
+    .references {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    .references li { margin-bottom: 10px; }
+
+    @media (max-width: 680px) {
+      body { margin-top: 24px; }
+      .student-info { grid-template-columns: 1fr; }
+      .student-info dd { margin-bottom: 8px; }
+      table { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Global Noise Reduction versus Phonetic Preservation in Wiener Speech Enhancement</h1>
+      <p class="document-type">ELEC5305 Project Proposal</p>
+    </header>
+
+    <section>
+      <h2>1. Project Title</h2>
+      <p>Global Noise Reduction versus Phonetic Preservation in Wiener Speech Enhancement</p>
+    </section>
+
+    <section>
+      <h2>2. Student Information</h2>
+      <dl class="student-info">
+        <dt>Full Name</dt>
+        <dd>Weitao Shi</dd>
+        <dt>Student ID (SID)</dt>
+        <dd>550603890</dd>
+        <dt>GitHub Username</dt>
+        <dd>SAOTAO117</dd>
+        <dt>GitHub Project Link</dt>
+        <dd><a href="https://github.com/SAOTAO117/elec5305-project-550603890">github.com/SAOTAO117/elec5305-project-550603890</a></dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>3. Project Overview</h2>
+      <p>This project investigates whether STFT Wiener filtering preserves all parts of speech equally. The main research question is: does STFT Wiener filtering distort broad phonetic classes unequally, and can improvement in global SNR conceal selective loss of low-energy, noise-like speech information?</p>
+      <p>A Wiener filter reduces time-frequency components that have a low estimated signal-to-noise ratio. This is useful for removing environmental noise, but some consonants also contain weak or noise-like energy. The project therefore compares whole-sentence improvement with measurements made separately for vowels, nasals and approximants, fricatives, and stops and affricates. The experiment does not assume that one class must be affected most. The result will be determined from controlled speech and noise mixtures.</p>
+    </section>
+
+    <section>
+      <h2>4. Background and Motivation</h2>
+      <p>Speech is not a uniform signal. Vowels normally have relatively strong periodic excitation, harmonic structure and clear formants. Fricatives such as /s/ and /f/ are often weaker, aperiodic and concentrated at higher frequencies. Stops contain short bursts and rapid changes. These differences mean that each class occupies the time-frequency plane in a different way.</p>
+      <p>The Wiener gain is calculated from estimated speech and noise power. It does not contain phonetic information and cannot identify whether noise-like energy belongs to the background or to a consonant. A weak fricative may therefore receive strong attenuation even when it contains useful speech information. The amount of attenuation may also change with the noise spectrum. Traffic noise, steady indoor noise and speech-like public-space noise overlap with speech in different frequency regions.</p>
+      <p>Whole-sentence SNR is useful for measuring overall noise reduction, but it averages across the complete recording. A high global improvement can hide a short consonant that has lost important spectral energy. Previous work has shown that noise-reduction gain can introduce speech distortion without a corresponding intelligibility benefit [2]. Phoneme-scale evaluation has also shown that speech-enhancement performance can vary between phonetic categories [3]. This project applies that question specifically to a classical single-channel Wiener filter.</p>
+    </section>
+
+    <section>
+      <h2>5. Proposed Methodology</h2>
+      <p>Ten 16-kHz clean speech recordings from different speakers will be selected from LibriSpeech Segment. Each recording includes phoneme start and end times. The labels will be grouped into vowels, nasals and approximants, fricatives, stops and affricates, and silence. Silence will be kept as a control because a suitable noise-reduction filter should apply strong attenuation when no speech is present.</p>
+      <p>Three environmental recordings from the DEMAND database will be used: DKITCHEN, PCAFETER and STRAFFIC. Known noise will be added to each clean recording at input SNR values of -5, 0, 5 and 10 dB. Two reproducible noise sections will be used for each speech and noise pair. This gives 10 speakers x 3 noises x 4 SNR values x 2 noise sections, or 240 test conditions.</p>
+      <p>The signal processing will be implemented in MATLAB. Each mixture will be analysed using an STFT with a 512-sample square-root Hann window, 256-sample hop and 512-point FFT. Noise power will be estimated from a 0.5-second noise-only section. The Wiener gain will then be calculated and applied to the noisy STFT before inverse-STFT reconstruction. The same gain will also be applied separately to the known clean-speech STFT and known noise STFT. This separates desired-speech attenuation from residual noise.</p>
+      <p>Each STFT frame will be assigned to the phoneme containing the centre time of that frame. For every labelled segment, the program will calculate mean Wiener gain, gain in selected frequency bands, desired-speech retention, high-frequency retention, residual-noise energy, log-spectral distortion and segmental SNR improvement. Whole-sentence SNR improvement and STOI, when available, will be retained as global reference measures.</p>
+      <p>Phone tokens will first be averaged within each speaker. The final comparison will use speaker-level averages so that one speaker with more labelled segments does not dominate the result. Results will be compared across phonetic class, noise type and input SNR. The main figures will show gain by phonetic class, global SNR improvement against class distortion, frequency-dependent preservation and class retention across SNR.</p>
+    </section>
+
+    <section>
+      <h2>6. Expected Outcomes</h2>
+      <p>The Wiener filter is expected to reduce residual noise and improve the whole-sentence error SNR in most conditions. Phonetic preservation may not follow the same pattern. Strong harmonic speech may be retained differently from weak, broadband or short-duration consonants, especially when the background noise overlaps with their frequency content.</p>
+      <p>The experiment may show that fricatives or stops receive greater attenuation, that the most affected class changes with the noise spectrum, or that the classes are preserved more uniformly than expected. Any of these outcomes is useful because the conclusion will be based on measured class-level behaviour rather than an assumed result. The main comparison will determine whether a favourable global noise-reduction score can conceal selective loss of speech information.</p>
+    </section>
+
+    <section>
+      <h2>7. Timeline</h2>
+      <table>
+        <thead>
+          <tr><th>Weeks</th><th>Task</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1-2</td><td>Define the revised research question and project scope.</td></tr>
+          <tr><td>3-5</td><td>Review the literature and prepare phoneme-labelled speech and environmental noise.</td></tr>
+          <tr><td>6-9</td><td>Implement and verify the STFT Wiener filter and phoneme mapping.</td></tr>
+          <tr><td>10-11</td><td>Run the noise and SNR experiments and produce the class-level measurements.</td></tr>
+          <tr><td>12-13</td><td>Interpret the results, prepare the final figures and complete the report and demonstration.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>8. References</h2>
+      <ol class="references">
+        <li>P. C. Loizou, <em>Speech Enhancement: Theory and Practice</em>, 2nd ed. CRC Press, 2013. <a href="https://doi.org/10.1201/b14529">doi:10.1201/b14529</a>.</li>
+        <li>G. Kim and P. C. Loizou, “Gain-induced speech distortions and the absence of intelligibility benefit with existing noise-reduction algorithms,” <em>Journal of the Acoustical Society of America</em>, 2011. <a href="https://doi.org/10.1121/1.3619790">doi:10.1121/1.3619790</a>.</li>
+        <li>N.-E. Monir, P. Magron and R. Serizel, “A Phoneme-Scale Assessment of Multichannel Speech Enhancement Algorithms,” 2024. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11638999/">pmc.ncbi.nlm.nih.gov/articles/PMC11638999</a>.</li>
+        <li>Y.-Y. Kong, A. Mullangi and K. Kokkinakis, “Classification of Fricative Consonants for Speech Enhancement in Hearing Devices,” <em>PLOS ONE</em>, 2014. <a href="https://doi.org/10.1371/journal.pone.0095001">doi:10.1371/journal.pone.0095001</a>.</li>
+        <li>C. H. Shadle, W. R. Chen, L. L. Koenig and J. L. Preston, “Refining and extending measures for fricative spectra, with special attention to the high-frequency range,” <em>Journal of the Acoustical Society of America</em>, 2023. <a href="https://doi.org/10.1121/10.0021075">doi:10.1121/10.0021075</a>.</li>
+        <li>C. H. Taal, R. C. Hendriks, R. Heusdens and J. Jensen, “An Algorithm for Intelligibility Prediction of Time-Frequency Weighted Noisy Speech,” <em>IEEE Transactions on Audio, Speech, and Language Processing</em>, 2011. <a href="https://doi.org/10.1109/TASL.2011.2114881">doi:10.1109/TASL.2011.2114881</a>.</li>
+        <li>V. Panayotov, G. Chen, D. Povey and S. Khudanpur, “LibriSpeech: An ASR Corpus Based on Public Domain Audio Books,” <em>ICASSP</em>, 2015. <a href="https://doi.org/10.1109/ICASSP.2015.7178964">doi:10.1109/ICASSP.2015.7178964</a>.</li>
+        <li>J. Thiemann, N. Ito and E. Vincent, “The Diverse Environments Multi-channel Acoustic Noise Database,” 2013. <a href="https://doi.org/10.5281/zenodo.1227121">doi:10.5281/zenodo.1227121</a>.</li>
+      </ol>
+    </section>
+  </main>
+</body>
+</html>

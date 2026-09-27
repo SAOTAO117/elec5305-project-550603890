@@ -1,0 +1,4 @@
+noise_id,environment,audio_path,channel
+DKITCHEN,steady_indoor,noise/DKITCHEN.wav,1
+STRAFFIC,traffic,noise/STRAFFIC.wav,1
+PCAFETER,public_space,noise/PCAFETER.wav,1
