@@ -3,169 +3,566 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ELEC5305 Project Proposal - Weitao Shi</title>
+  <meta name="description" content="Current ELEC5305 project work on phonetic preservation in Wiener speech enhancement.">
+  <title>ELEC5305 Project Work - Weitao Shi</title>
   <style>
+    :root {
+      --ink: #181818;
+      --muted: #5f6368;
+      --line: #d6d9dc;
+      --soft: #f3f5f4;
+      --accent: #125f4a;
+      --link: #075e9a;
+      --paper: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      max-width: 850px;
-      margin: 40px auto;
-      padding: 0 24px 40px;
-      color: #000;
-      background: #fff;
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
       font-family: "Times New Roman", Times, serif;
-      font-size: 17px;
-      line-height: 1.6;
+      font-size: 18px;
+      line-height: 1.62;
     }
 
-    header {
-      margin-bottom: 36px;
-      text-align: center;
+    a {
+      color: var(--link);
+      text-underline-offset: 3px;
     }
 
-    h1 {
-      margin: 0 0 6px;
-      font-size: 28px;
+    a:hover { color: #043f68; }
+
+    .page-width {
+      width: min(1080px, calc(100% - 48px));
+      margin: 0 auto;
     }
 
-    .document-type {
+    .site-header {
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 62px;
+      gap: 24px;
+    }
+
+    .course {
       margin: 0;
-      text-align: center;
+      font-weight: bold;
+      letter-spacing: 0;
     }
 
-    h2 {
-      margin: 30px 0 10px;
-      font-size: 20px;
-    }
-
-    p {
-      margin: 0 0 14px;
-      text-align: justify;
-    }
-
-    a { color: #0645ad; }
-
-    .student-info {
-      display: grid;
-      grid-template-columns: 175px 1fr;
-      margin: 0;
-    }
-
-    .student-info dt { font-weight: bold; }
-    .student-info dd { margin: 0; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
       font-size: 16px;
     }
 
-    th, td {
-      padding: 8px 10px;
-      border: 1px solid #777;
+    nav a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    nav a:hover { text-decoration: underline; }
+
+    .intro {
+      padding: 58px 0 46px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--accent);
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #111;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 0;
+      font-size: 42px;
+      line-height: 1.13;
+    }
+
+    .summary {
+      max-width: 860px;
+      margin: 22px 0 0;
+      font-size: 21px;
+      line-height: 1.5;
+    }
+
+    .project-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 30px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    section {
+      padding: 46px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    section:nth-of-type(even) { background: var(--soft); }
+
+    h2 {
+      margin: 0 0 20px;
+      font-size: 29px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      margin: 26px 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+    }
+
+    p { margin: 0 0 16px; }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 44px;
+    }
+
+    ul {
+      margin: 10px 0 0;
+      padding-left: 24px;
+    }
+
+    li { margin-bottom: 8px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 32px;
+      border-top: 2px solid var(--accent);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .metric {
+      min-height: 112px;
+      padding: 20px 18px;
+      border-right: 1px solid var(--line);
+    }
+
+    .metric:last-child { border-right: 0; }
+
+    .metric strong {
+      display: block;
+      color: var(--accent);
+      font-size: 30px;
+      line-height: 1.1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.3;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 16px;
+    }
+
+    th,
+    td {
+      padding: 11px 13px;
+      border: 1px solid #aeb4b8;
       text-align: left;
       vertical-align: top;
     }
 
-    th { background: #eee; }
-
-    .references {
-      margin: 0;
-      padding-left: 24px;
+    th {
+      background: #e7ebe9;
+      font-weight: bold;
     }
 
-    .references li { margin-bottom: 10px; }
+    .result-summary {
+      max-width: 900px;
+      margin-bottom: 32px;
+    }
 
-    @media (max-width: 680px) {
-      body { margin-top: 24px; }
-      .student-info { grid-template-columns: 1fr; }
-      .student-info dd { margin-bottom: 8px; }
-      table { font-size: 15px; }
+    figure {
+      margin: 0 0 42px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #fff;
+    }
+
+    figcaption {
+      margin-top: 12px;
+      color: #34373a;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .result-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px 42px;
+      margin-top: 28px;
+    }
+
+    .result-item {
+      padding-top: 15px;
+      border-top: 2px solid #8d9691;
+    }
+
+    .result-item strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 19px;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.88em;
+    }
+
+    .file-list {
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+    }
+
+    .file-list li {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 18px;
+      margin: 0;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px 24px;
+      margin-top: 26px;
+    }
+
+    .primary-link {
+      display: inline-block;
+      padding: 10px 16px;
+      border: 1px solid var(--accent);
+      color: #fff;
+      background: var(--accent);
+      font-size: 16px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .primary-link:hover {
+      color: #fff;
+      background: #0d4d3c;
+    }
+
+    footer {
+      padding: 30px 0 42px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    @media (max-width: 760px) {
+      body { font-size: 17px; }
+      .page-width { width: min(100% - 30px, 1080px); }
+      .header-row { align-items: flex-start; padding: 16px 0; }
+      nav { gap: 10px 16px; }
+      .intro { padding: 38px 0 34px; }
+      h1 { font-size: 34px; }
+      .summary { font-size: 19px; }
+      .two-column,
+      .result-list { grid-template-columns: 1fr; gap: 18px; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .file-list li { grid-template-columns: 1fr; gap: 3px; }
+    }
+
+    @media (max-width: 500px) {
+      .header-row { display: block; }
+      nav { margin-top: 10px; }
+      h1 { font-size: 30px; }
+      .metrics { grid-template-columns: 1fr; }
+      .metric {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .metric:last-child { border-bottom: 0; }
+      table { font-size: 14px; }
+      th, td { padding: 8px; }
     }
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <div class="page-width header-row">
+      <p class="course">ELEC5305 Project Work</p>
+      <nav aria-label="Project navigation">
+        <a href="#progress">Progress</a>
+        <a href="#results">Preliminary results</a>
+        <a href="#files">Code and data</a>
+        <a href="proposal.html">Proposal</a>
+      </nav>
+    </div>
+  </header>
+
   <main>
-    <header>
-      <h1>Global Noise Reduction versus Phonetic Preservation in Wiener Speech Enhancement</h1>
-      <p class="document-type">ELEC5305 Project Proposal</p>
-    </header>
+    <div class="intro">
+      <div class="page-width">
+        <p class="eyebrow">Current project work</p>
+        <h1>Global Noise Reduction versus Phonetic Preservation in Wiener Speech Enhancement</h1>
+        <p class="summary">
+          This project examines whether an STFT Wiener filter can improve a whole-utterance
+          noise-reduction score while preserving broad phonetic classes unequally. The current
+          implementation separates desired-speech attenuation from residual noise and compares
+          global measurements with phoneme-aligned measurements.
+        </p>
+        <div class="project-meta">
+          <span><strong>Student:</strong> Weitao Shi</span>
+          <span><strong>SID:</strong> 550603890</span>
+          <span><strong>Last updated:</strong> 1 October 2026</span>
+        </div>
+      </div>
+    </div>
 
-    <section>
-      <h2>1. Project Title</h2>
-      <p>Global Noise Reduction versus Phonetic Preservation in Wiener Speech Enhancement</p>
+    <section id="progress">
+      <div class="page-width">
+        <h2>Work Completed to Date</h2>
+        <div class="two-column">
+          <div>
+            <p>
+              A complete MATLAB experiment has been implemented for controlled single-channel
+              speech enhancement. The program constructs noisy mixtures, applies an STFT Wiener
+              filter, reconstructs the output and writes reproducible tables, figures and audio
+              examples.
+            </p>
+            <ul>
+              <li>STFT analysis and inverse-STFT reconstruction</li>
+              <li>Noise-power estimation from a 0.5-second noise-only prefix</li>
+              <li>Wiener gain estimation with temporal smoothing and a gain floor</li>
+              <li>Separate filtering of known clean-speech and noise components</li>
+              <li>Phoneme-to-frame mapping using supplied phone boundaries</li>
+            </ul>
+          </div>
+          <div>
+            <p>
+              The current evaluation includes whole-utterance SNR and STOI, phonetic-class gain,
+              desired-speech retention, residual-noise energy, log-spectral distortion and
+              segmental SNR. Results are averaged at speaker level before class comparisons.
+            </p>
+            <ul>
+              <li>Ten English utterances from ten LibriSpeech speakers</li>
+              <li>Three DEMAND environmental noise recordings</li>
+              <li>Four input SNR levels and two reproducible noise sections</li>
+              <li>Vowels, nasals and approximants, fricatives, stops and affricates</li>
+              <li>Silence retained as a noise-suppression control</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="metrics" aria-label="Experiment summary">
+          <div class="metric"><strong>10</strong><span>speakers</span></div>
+          <div class="metric"><strong>3</strong><span>noise environments</span></div>
+          <div class="metric"><strong>4</strong><span>input SNR levels</span></div>
+          <div class="metric"><strong>240</strong><span>controlled mixtures</span></div>
+        </div>
+      </div>
     </section>
 
     <section>
-      <h2>2. Student Information</h2>
-      <dl class="student-info">
-        <dt>Full Name</dt>
-        <dd>Weitao Shi</dd>
-        <dt>Student ID (SID)</dt>
-        <dd>550603890</dd>
-        <dt>GitHub Username</dt>
-        <dd>SAOTAO117</dd>
-        <dt>GitHub Project Link</dt>
-        <dd><a href="https://github.com/SAOTAO117/elec5305-project-550603890">github.com/SAOTAO117/elec5305-project-550603890</a></dd>
-      </dl>
+      <div class="page-width">
+        <h2>Experiment Setup</h2>
+        <p>
+          Each 16 kHz speech recording is mixed with DKITCHEN, PCAFETER and STRAFFIC noise at
+          -5, 0, 5 and 10 dB input SNR. Two fixed noise sections are used for each speech-noise
+          pair. A 512-sample square-root Hann window, 256-sample hop and 512-point FFT are used.
+          Frames are assigned to the phone containing the frame-centre time.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Current setting</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Speech</td>
+              <td>10 LibriSpeech utterances</td>
+              <td>One utterance from each of ten speakers</td>
+            </tr>
+            <tr>
+              <td>Noise</td>
+              <td>DKITCHEN, PCAFETER, STRAFFIC</td>
+              <td>Stationary, public-space and traffic conditions</td>
+            </tr>
+            <tr>
+              <td>Input SNR</td>
+              <td>-5, 0, 5 and 10 dB</td>
+              <td>Tests severe to moderate noise</td>
+            </tr>
+            <tr>
+              <td>Evaluation</td>
+              <td>Global and phoneme-aligned measurements</td>
+              <td>Compares overall improvement with class preservation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="results">
+      <div class="page-width">
+        <h2>Preliminary Results</h2>
+        <p class="result-summary">
+          Across the 240 mixtures, whole-utterance error SNR improved by 6.18 dB on average.
+          Mean STOI changed from 0.8432 before filtering to 0.8385 after filtering, so the global
+          SNR improvement did not produce an intelligibility improvement. Desired-speech
+          decomposition also showed larger low-SNR energy losses for fricatives and stops or
+          affricates than for vowels and nasals or approximants.
+        </p>
+
+        <figure>
+          <img src="results/figures/figure1_global_vs_phonetic.png"
+               alt="Global SNR improvement and phonetic-class distortion across SNR and noise type">
+          <figcaption>
+            <strong>Figure 1.</strong> Whole-utterance SNR improvement is shown with phonetic-class
+            distortion. A favourable global value can coexist with substantial class-level change.
+          </figcaption>
+        </figure>
+
+        <figure>
+          <img src="results/figures/figure3_retention_vs_snr.png"
+               alt="Desired-speech retention by phonetic class and input SNR">
+          <figcaption>
+            <strong>Figure 2.</strong> Desired-speech retention improves as input SNR increases,
+            but class differences are largest in severe noise.
+          </figcaption>
+        </figure>
+
+        <figure>
+          <img src="results/figures/figure4_spectral_distortion.png"
+               alt="Log-spectral distortion by phonetic class and input SNR">
+          <figcaption>
+            <strong>Figure 3.</strong> Log-spectral distortion decreases at higher input SNR and
+            depends on both phonetic class and noise environment.
+          </figcaption>
+        </figure>
+
+        <div class="result-list">
+          <div class="result-item">
+            <strong>Global noise reduction</strong>
+            Mean error-SNR improvement was 7.29 dB for DKITCHEN, 6.86 dB for STRAFFIC and
+            4.39 dB for PCAFETER.
+          </div>
+          <div class="result-item">
+            <strong>Speech preservation</strong>
+            At -5 dB, mean desired-speech retention was -2.42 dB for vowels and approximately
+            -4.4 dB for fricatives and stops or affricates.
+          </div>
+          <div class="result-item">
+            <strong>Noise dependence</strong>
+            PCAFETER produced the smallest SNR improvement and the clearest mean STOI decrease,
+            consistent with its speech-like and time-varying content.
+          </div>
+          <div class="result-item">
+            <strong>Current interpretation</strong>
+            Mean Wiener gain alone does not explain class preservation; speech energy, noise and
+            gain must be considered jointly across time and frequency.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="files">
+      <div class="page-width">
+        <h2>Code Data and Reproduction</h2>
+        <p>
+          The repository includes the MATLAB implementation, selected speech and noise files,
+          phone labels, result tables, figures and audio examples. Running <code>main</code> from
+          the repository folder rebuilds the 240 mixtures and regenerates the results.
+        </p>
+        <ul class="file-list">
+          <li><code>main.m</code><span>Defines the experiment and writes the result files.</span></li>
+          <li><code>wienerFilter.m</code><span>Performs STFT Wiener filtering and component decomposition.</span></li>
+          <li><code>phoneMetrics.m</code><span>Calculates phoneme-aligned measurements.</span></li>
+          <li><code>loadPhoneLabels.m</code><span>Reads and validates the phone boundaries.</span></li>
+          <li><code>data/</code><span>Contains selected speech, noise, labels and manifest files.</span></li>
+          <li><code>results/</code><span>Contains generated CSV tables, figures and WAV examples.</span></li>
+        </ul>
+        <div class="actions">
+          <a class="primary-link" href="https://github.com/SAOTAO117/elec5305-project-550603890">
+            Open the GitHub repository
+          </a>
+          <a href="proposal.html">Read the original project proposal</a>
+        </div>
+      </div>
     </section>
 
     <section>
-      <h2>3. Project Overview</h2>
-      <p>This project investigates whether STFT Wiener filtering preserves all parts of speech equally. The main research question is: does STFT Wiener filtering distort broad phonetic classes unequally, and can improvement in global SNR conceal selective loss of low-energy, noise-like speech information?</p>
-      <p>A Wiener filter reduces time-frequency components that have a low estimated signal-to-noise ratio. This is useful for removing environmental noise, but some consonants also contain weak or noise-like energy. The project therefore compares whole-sentence improvement with measurements made separately for vowels, nasals and approximants, fricatives, and stops and affricates. The experiment does not assume that one class must be affected most. The result will be determined from controlled speech and noise mixtures.</p>
-    </section>
-
-    <section>
-      <h2>4. Background and Motivation</h2>
-      <p>Speech is not a uniform signal. Vowels normally have relatively strong periodic excitation, harmonic structure and clear formants. Fricatives such as /s/ and /f/ are often weaker, aperiodic and concentrated at higher frequencies. Stops contain short bursts and rapid changes. These differences mean that each class occupies the time-frequency plane in a different way.</p>
-      <p>The Wiener gain is calculated from estimated speech and noise power. It does not contain phonetic information and cannot identify whether noise-like energy belongs to the background or to a consonant. A weak fricative may therefore receive strong attenuation even when it contains useful speech information. The amount of attenuation may also change with the noise spectrum. Traffic noise, steady indoor noise and speech-like public-space noise overlap with speech in different frequency regions.</p>
-      <p>Whole-sentence SNR is useful for measuring overall noise reduction, but it averages across the complete recording. A high global improvement can hide a short consonant that has lost important spectral energy. Previous work has shown that noise-reduction gain can introduce speech distortion without a corresponding intelligibility benefit [2]. Phoneme-scale evaluation has also shown that speech-enhancement performance can vary between phonetic categories [3]. This project applies that question specifically to a classical single-channel Wiener filter.</p>
-    </section>
-
-    <section>
-      <h2>5. Proposed Methodology</h2>
-      <p>Ten 16-kHz clean speech recordings from different speakers will be selected from LibriSpeech Segment. Each recording includes phoneme start and end times. The labels will be grouped into vowels, nasals and approximants, fricatives, stops and affricates, and silence. Silence will be kept as a control because a suitable noise-reduction filter should apply strong attenuation when no speech is present.</p>
-      <p>Three environmental recordings from the DEMAND database will be used: DKITCHEN, PCAFETER and STRAFFIC. Known noise will be added to each clean recording at input SNR values of -5, 0, 5 and 10 dB. Two reproducible noise sections will be used for each speech and noise pair. This gives 10 speakers x 3 noises x 4 SNR values x 2 noise sections, or 240 test conditions.</p>
-      <p>The signal processing will be implemented in MATLAB. Each mixture will be analysed using an STFT with a 512-sample square-root Hann window, 256-sample hop and 512-point FFT. Noise power will be estimated from a 0.5-second noise-only section. The Wiener gain will then be calculated and applied to the noisy STFT before inverse-STFT reconstruction. The same gain will also be applied separately to the known clean-speech STFT and known noise STFT. This separates desired-speech attenuation from residual noise.</p>
-      <p>Each STFT frame will be assigned to the phoneme containing the centre time of that frame. For every labelled segment, the program will calculate mean Wiener gain, gain in selected frequency bands, desired-speech retention, high-frequency retention, residual-noise energy, log-spectral distortion and segmental SNR improvement. Whole-sentence SNR improvement and STOI, when available, will be retained as global reference measures.</p>
-      <p>Phone tokens will first be averaged within each speaker. The final comparison will use speaker-level averages so that one speaker with more labelled segments does not dominate the result. Results will be compared across phonetic class, noise type and input SNR. The main figures will show gain by phonetic class, global SNR improvement against class distortion, frequency-dependent preservation and class retention across SNR.</p>
-    </section>
-
-    <section>
-      <h2>6. Expected Outcomes</h2>
-      <p>The Wiener filter is expected to reduce residual noise and improve the whole-sentence error SNR in most conditions. Phonetic preservation may not follow the same pattern. Strong harmonic speech may be retained differently from weak, broadband or short-duration consonants, especially when the background noise overlaps with their frequency content.</p>
-      <p>The experiment may show that fricatives or stops receive greater attenuation, that the most affected class changes with the noise spectrum, or that the classes are preserved more uniformly than expected. Any of these outcomes is useful because the conclusion will be based on measured class-level behaviour rather than an assumed result. The main comparison will determine whether a favourable global noise-reduction score can conceal selective loss of speech information.</p>
-    </section>
-
-    <section>
-      <h2>7. Timeline</h2>
-      <table>
-        <thead>
-          <tr><th>Weeks</th><th>Task</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>1-2</td><td>Define the revised research question and project scope.</td></tr>
-          <tr><td>3-5</td><td>Review the literature and prepare phoneme-labelled speech and environmental noise.</td></tr>
-          <tr><td>6-9</td><td>Implement and verify the STFT Wiener filter and phoneme mapping.</td></tr>
-          <tr><td>10-11</td><td>Run the noise and SNR experiments and produce the class-level measurements.</td></tr>
-          <tr><td>12-13</td><td>Interpret the results, prepare the final figures and complete the report and demonstration.</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section>
-      <h2>8. References</h2>
-      <ol class="references">
-        <li>P. C. Loizou, <em>Speech Enhancement: Theory and Practice</em>, 2nd ed. CRC Press, 2013. <a href="https://doi.org/10.1201/b14529">doi:10.1201/b14529</a>.</li>
-        <li>G. Kim and P. C. Loizou, “Gain-induced speech distortions and the absence of intelligibility benefit with existing noise-reduction algorithms,” <em>Journal of the Acoustical Society of America</em>, 2011. <a href="https://doi.org/10.1121/1.3619790">doi:10.1121/1.3619790</a>.</li>
-        <li>N.-E. Monir, P. Magron and R. Serizel, “A Phoneme-Scale Assessment of Multichannel Speech Enhancement Algorithms,” 2024. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11638999/">pmc.ncbi.nlm.nih.gov/articles/PMC11638999</a>.</li>
-        <li>Y.-Y. Kong, A. Mullangi and K. Kokkinakis, “Classification of Fricative Consonants for Speech Enhancement in Hearing Devices,” <em>PLOS ONE</em>, 2014. <a href="https://doi.org/10.1371/journal.pone.0095001">doi:10.1371/journal.pone.0095001</a>.</li>
-        <li>C. H. Shadle, W. R. Chen, L. L. Koenig and J. L. Preston, “Refining and extending measures for fricative spectra, with special attention to the high-frequency range,” <em>Journal of the Acoustical Society of America</em>, 2023. <a href="https://doi.org/10.1121/10.0021075">doi:10.1121/10.0021075</a>.</li>
-        <li>C. H. Taal, R. C. Hendriks, R. Heusdens and J. Jensen, “An Algorithm for Intelligibility Prediction of Time-Frequency Weighted Noisy Speech,” <em>IEEE Transactions on Audio, Speech, and Language Processing</em>, 2011. <a href="https://doi.org/10.1109/TASL.2011.2114881">doi:10.1109/TASL.2011.2114881</a>.</li>
-        <li>V. Panayotov, G. Chen, D. Povey and S. Khudanpur, “LibriSpeech: An ASR Corpus Based on Public Domain Audio Books,” <em>ICASSP</em>, 2015. <a href="https://doi.org/10.1109/ICASSP.2015.7178964">doi:10.1109/ICASSP.2015.7178964</a>.</li>
-        <li>J. Thiemann, N. Ito and E. Vincent, “The Diverse Environments Multi-channel Acoustic Noise Database,” 2013. <a href="https://doi.org/10.5281/zenodo.1227121">doi:10.5281/zenodo.1227121</a>.</li>
-      </ol>
+      <div class="page-width">
+        <h2>Current Conclusion and Next Steps</h2>
+        <div class="two-column">
+          <div>
+            <h3>Current conclusion</h3>
+            <p>
+              The present results support unequal preservation of broad phonetic classes. Global
+              SNR improvement can conceal attenuation of desired speech in specific labelled
+              segments. The class difference cannot be explained by a fixed gain ordering alone.
+            </p>
+          </div>
+          <div>
+            <h3>Next steps</h3>
+            <p>
+              The remaining work is to check parameter sensitivity, refine the interpretation of
+              the class-level results, complete the written report and prepare the short project
+              demonstration.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
+
+  <footer>
+    <div class="page-width">
+      ELEC5305 project work by Weitao Shi, SID 550603890.
+    </div>
+  </footer>
 </body>
 </html>

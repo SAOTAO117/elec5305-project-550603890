@@ -12,17 +12,17 @@ result with the results for four phoneme groups.
 - `wienerFilter.m` applies the Wiener filter.
 - `phoneMetrics.m` calculates the measurements.
 - `loadPhoneLabels.m` reads the phoneme labels.
-- `plotExample.m` creates the example figure and audio.
+- `plotExample.m` creates the three example-analysis figures and audio.
 - `data/speech` contains ten speech recordings.
 - `data/noise` contains the three noise recordings.
 - `data/labels` contains the phoneme labels.
 - `results/tables` contains the result tables.
-- `results/figures` contains the five figures.
+- `results/figures` contains the seven report figures.
 - `results/audio` contains the clean, noisy and enhanced examples.
 
 ## Requirements
 
-- MATLAB R2025b
+- MATLAB (tested with R2025b)
 - Signal Processing Toolbox
 
 Audio Toolbox is not required unless STOI is used.
@@ -56,8 +56,8 @@ The output from my test run is already included in `results`:
 - `global_results.csv` contains one row for each test condition.
 - `phone_results.csv` contains the result for each labelled phoneme segment.
 - `class_summary.csv` contains the average result for each phoneme group.
-- Figures 1 to 5 compare Wiener gain, SNR improvement, speech retention and
-  spectral distortion.
+- Figures 1 to 7 compare global and phoneme-level results, Wiener gain, speech
+  retention, spectral distortion and one aligned time-frequency example.
 - The three WAV files provide one clean, noisy and enhanced example.
 
 The project page is available at

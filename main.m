@@ -172,13 +172,14 @@ for i = 1:numel(noises)
     ylim([0 1]); grid on; xtickangle(25); title(noises(i),Interpreter="none");
     ylabel("Mean Wiener gain");
 end
-exportgraphics(fig,fullfile(figuresFolder,"figure1_gain_by_class.png"),Resolution=140);
+applyReportFont(fig);
+exportgraphics(fig,fullfile(figuresFolder,"figure2_gain_by_class.png"),Resolution=200);
 close(fig);
 
 makeClassPlot("SpeechRetentiondBMean","Speech retention (dB)", ...
-    "figure4_retention_vs_snr.png");
+    "figure3_retention_vs_snr.png");
 makeClassPlot("MixtureLSDdBMean","Log-spectral distortion (dB)", ...
-    "figure5_spectral_distortion.png");
+    "figure4_spectral_distortion.png");
 
 fig = figure(Visible="off",Color="w",Position=[50 50 1200 480]);
 tiledlayout(1,numel(noises),Padding="compact");
@@ -204,7 +205,8 @@ for i = 1:numel(noises)
     title(noises(i),Interpreter="none");
     if i == 1, legend(Location="best"); end
 end
-exportgraphics(fig,fullfile(figuresFolder,"figure2_global_vs_phonetic.png"),Resolution=140);
+applyReportFont(fig);
+exportgraphics(fig,fullfile(figuresFolder,"figure1_global_vs_phonetic.png"),Resolution=200);
 close(fig);
 
     function makeClassPlot(fieldName,yLabel,fileName)
@@ -223,9 +225,14 @@ close(fig);
             title(noises(noiseIndex),Interpreter="none");
             if noiseIndex == 1, legend(Location="best"); end
         end
-        exportgraphics(fig,fullfile(figuresFolder,fileName),Resolution=140);
+        applyReportFont(fig);
+        exportgraphics(fig,fullfile(figuresFolder,fileName),Resolution=200);
         close(fig);
     end
+end
+
+function applyReportFont(fig)
+set(findall(fig,"-property","FontName"),"FontName","Times New Roman");
 end
 
 function value = meanFinite(values)

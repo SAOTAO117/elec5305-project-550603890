@@ -13,14 +13,18 @@ noisySpectrum = result.Y(bins,:);
 enhancedSpectrum = result.Gain(bins,:).*noisySpectrum;
 reference = max(abs(cleanSpectrum(:,valid)),[],"all");
 
-fig = figure(Visible="off",Color="w",Position=[50 50 1300 1300]);
-tiledlayout(5,2,Padding="compact",TileSpacing="compact");
+fig = figure(Visible="off",Color="w",Position=[50 50 1300 680]);
+tiledlayout(2,1,Padding="compact",TileSpacing="compact");
+duration = labels.End(end)/c.SampleRate;
+drawWaveform(0,duration/2);
+drawWaveform(duration/2,duration);
+sgtitle("Clean speech and phone boundaries");
+applyReportFont(fig);
+exportgraphics(fig,fullfile(figuresFolder,"figure5_phone_boundaries.png"),Resolution=200);
+close(fig);
 
-nexttile([1 2]);
-plot((0:labels.End(end)-1)/c.SampleRate,result.Clean(samples));
-grid on; ylabel("Amplitude"); title("Clean speech and phone boundaries");
-markPhones(true);
-
+fig = figure(Visible="off",Color="w",Position=[50 50 1300 820]);
+tiledlayout(2,2,Padding="compact",TileSpacing="compact");
 drawSpectrogram(cleanSpectrum,"Clean speech");
 drawSpectrogram(noisySpectrum,"Noisy speech at 0 dB SNR");
 drawSpectrogram(enhancedSpectrum,"Enhanced speech");
@@ -30,13 +34,18 @@ imagesc(centres(valid),frequency,result.Gain(bins,valid));
 axis xy; clim([0 1]); colorbar;
 xlabel("Time (s)"); ylabel("Frequency (kHz)"); title("Wiener gain");
 markPhones(false);
+applyReportFont(fig);
+exportgraphics(fig,fullfile(figuresFolder,"figure6_time_frequency.png"),Resolution=200);
+close(fig);
 
+fig = figure(Visible="off",Color="w",Position=[50 50 1300 820]);
+tiledlayout(2,2,Padding="compact",TileSpacing="compact");
 drawPhoneSpectrum("vowels","Representative vowel");
 drawPhoneSpectrum("nasals_approximants","Representative nasal / approximant");
 drawPhoneSpectrum("fricatives","Representative fricative");
 drawPhoneSpectrum("stops_affricates","Representative stop / affricate");
-
-exportgraphics(fig,fullfile(figuresFolder,"figure3_example_analysis.png"),Resolution=140);
+applyReportFont(fig);
+exportgraphics(fig,fullfile(figuresFolder,"figure7_class_spectra.png"),Resolution=200);
 close(fig);
 
 signals = [result.Clean(samples),result.Noisy(samples),result.Enhanced(samples)];
@@ -52,6 +61,14 @@ audiowrite(fullfile(audioFolder,"example_enhanced.wav"),signals(:,3)*scale,c.Sam
         axis xy; clim([-70 0]); colorbar;
         xlabel("Time (s)"); ylabel("Frequency (kHz)"); title(plotTitle);
         markPhones(false);
+    end
+
+    function drawWaveform(startTime,endTime)
+        nexttile;
+        plot((0:labels.End(end)-1)/c.SampleRate,result.Clean(samples));
+        xlim([startTime endTime]); grid on;
+        xlabel("Time (s)"); ylabel("Amplitude");
+        markPhones(true);
     end
 
     function drawPhoneSpectrum(phoneClass,plotTitle)
@@ -76,15 +93,25 @@ audiowrite(fullfile(audioFolder,"example_enhanced.wav"),signals(:,3)*scale,c.Sam
     function markPhones(showText)
         hold on;
         limits = ylim;
+        timeLimits = xlim;
         for index = 1:height(labels)
             startTime = labels.Start(index)/c.SampleRate;
-            xline(startTime,":",Color=[0.45 0.45 0.45]);
-            if showText && (labels.End(index)-labels.Start(index))/c.SampleRate >= 0.04
-                midpoint = (labels.Start(index)+labels.End(index))/(2*c.SampleRate);
+            midpoint = (labels.Start(index)+labels.End(index))/(2*c.SampleRate);
+            if startTime >= timeLimits(1) && startTime <= timeLimits(2)
+                xline(startTime,":",Color=[0.45 0.45 0.45]);
+            end
+            if showText && midpoint >= timeLimits(1) && midpoint <= timeLimits(2) && ...
+                    (labels.End(index)-labels.Start(index))/c.SampleRate >= 0.04
                 text(midpoint,limits(2)-0.07*diff(limits),labels.Phone(index), ...
-                    Rotation=90,HorizontalAlignment="right",FontSize=7,Interpreter="none");
+                    Rotation=90,HorizontalAlignment="right",FontSize=8, ...
+                    FontName="Times New Roman",Interpreter="none");
             end
         end
         hold off;
+    end
+
+    function applyReportFont(targetFigure)
+        set(findall(targetFigure,"-property","FontName"), ...
+            "FontName","Times New Roman");
     end
 end
