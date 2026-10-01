@@ -2,9 +2,10 @@
 
 ## Global Noise Reduction versus Phonetic Preservation in Wiener Speech Enhancement
 
-This is the MATLAB code and data for my ELEC5305 project. I used an STFT Wiener
-filter with three types of environmental noise, then compared the whole-signal
-result with the results for four phoneme groups.
+This repository contains the MATLAB code, audio and labels for my ELEC5305
+project. The experiment applies an STFT Wiener filter to speech mixed with three
+environmental noises, then compares whole-utterance measurements with results
+for four phoneme groups.
 
 ## Project files
 

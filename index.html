@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Current ELEC5305 project work on phonetic preservation in Wiener speech enhancement.">
+  <meta name="description" content="ELEC5305 project progress on phonetic preservation in Wiener speech enhancement.">
   <title>ELEC5305 Project Work - Weitao Shi</title>
   <style>
     :root {
@@ -344,11 +344,11 @@
   <main>
     <div class="intro">
       <div class="page-width">
-        <p class="eyebrow">Current project work</p>
+        <p class="eyebrow">ELEC5305 project progress</p>
         <h1>Global Noise Reduction versus Phonetic Preservation in Wiener Speech Enhancement</h1>
         <p class="summary">
           This project examines whether an STFT Wiener filter can improve a whole-utterance
-          noise-reduction score while preserving broad phonetic classes unequally. The current
+          noise-reduction score while preserving broad phonetic classes unequally. The MATLAB
           implementation separates desired-speech attenuation from residual noise and compares
           global measurements with phoneme-aligned measurements.
         </p>
@@ -362,14 +362,13 @@
 
     <section id="progress">
       <div class="page-width">
-        <h2>Work Completed to Date</h2>
+        <h2>Work Completed</h2>
         <div class="two-column">
           <div>
             <p>
-              A complete MATLAB experiment has been implemented for controlled single-channel
-              speech enhancement. The program constructs noisy mixtures, applies an STFT Wiener
-              filter, reconstructs the output and writes reproducible tables, figures and audio
-              examples.
+              The MATLAB program runs the full controlled single-channel speech-enhancement
+              experiment. It constructs noisy mixtures, applies an STFT Wiener filter,
+              reconstructs the output and writes reproducible tables, figures and audio examples.
             </p>
             <ul>
               <li>STFT analysis and inverse-STFT reconstruction</li>
@@ -381,7 +380,7 @@
           </div>
           <div>
             <p>
-              The current evaluation includes whole-utterance SNR and STOI, phonetic-class gain,
+              The analysis reports whole-utterance SNR and STOI, phonetic-class gain,
               desired-speech retention, residual-noise energy, log-spectral distortion and
               segmental SNR. Results are averaged at speaker level before class comparisons.
             </p>
@@ -417,7 +416,7 @@
           <thead>
             <tr>
               <th>Component</th>
-              <th>Current setting</th>
+              <th>Setting</th>
               <th>Purpose</th>
             </tr>
           </thead>
@@ -502,7 +501,7 @@
             consistent with its speech-like and time-varying content.
           </div>
           <div class="result-item">
-            <strong>Current interpretation</strong>
+            <strong>Interpretation</strong>
             Mean Wiener gain alone does not explain class preservation; speech energy, noise and
             gain must be considered jointly across time and frequency.
           </div>
@@ -512,7 +511,7 @@
 
     <section id="files">
       <div class="page-width">
-        <h2>Code Data and Reproduction</h2>
+        <h2>Code, Data and Reproduction</h2>
         <p>
           The repository includes the MATLAB implementation, selected speech and noise files,
           phone labels, result tables, figures and audio examples. Running <code>main</code> from
@@ -528,7 +527,7 @@
         </ul>
         <div class="actions">
           <a class="primary-link" href="https://github.com/SAOTAO117/elec5305-project-550603890">
-            Open the GitHub repository
+            GitHub Repository
           </a>
           <a href="proposal.html">Project Proposal</a>
         </div>
@@ -537,12 +536,12 @@
 
     <section>
       <div class="page-width">
-        <h2>Current Conclusion and Next Steps</h2>
+        <h2>Interpretation and Next Steps</h2>
         <div class="two-column">
           <div>
-            <h3>Current conclusion</h3>
+            <h3>Interpretation</h3>
             <p>
-              The present results support unequal preservation of broad phonetic classes. Global
+              The results support unequal preservation of broad phonetic classes. Global
               SNR improvement can conceal attenuation of desired speech in specific labelled
               segments. The class difference cannot be explained by a fixed gain ordering alone.
             </p>
@@ -550,9 +549,8 @@
           <div>
             <h3>Next steps</h3>
             <p>
-              The remaining work is to check parameter sensitivity, refine the interpretation of
-              the class-level results, complete the written report and prepare the short project
-              demonstration.
+              Next, I will check parameter sensitivity, refine the class-level interpretation,
+              complete the written report and prepare the short project demonstration.
             </p>
           </div>
         </div>
