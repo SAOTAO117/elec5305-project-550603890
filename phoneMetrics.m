@@ -20,17 +20,23 @@ for index=1:height(labels)
         "EndSeconds",labels.End(index)/c.SampleRate,"FrameCount",nnz(frameIndex), ...
         "MeanGain",NaN,"GainBelow1k",NaN,"Gain1to4k",NaN,"Gain4to8k",NaN, ...
         "SpeechRetentiondB",NaN,"HighFrequencyRetentiondB",NaN, ...
+        "FrameSpeechRetentiondB",NaN,"WeightedGain",NaN, ...
+        "BoundaryFrameFraction",NaN, ...
         "ResidualNoiseRatiodB",ratioDb(sum(noiseOut(sampleIndex).^2),sum(noiseIn(sampleIndex).^2)), ...
         "MixtureLSDdB",NaN,"SpeechLSDdB",NaN,"InputErrorSNRdB",NaN, ...
         "OutputErrorSNRdB",NaN,"DeltaErrorSNRdB",NaN);
     speechEnergy=sum(clean(sampleIndex).^2);
     isSpeech=labels.Class(index)~="silence" && speechEnergy>1e-12*sum(clean.^2);
     if isSpeech
+        row.SpeechRetentiondB=ratioDb(sum(speechComponent(sampleIndex).^2),speechEnergy);
         row.InputErrorSNRdB=errorSnr(clean(sampleIndex),noisy(sampleIndex)-clean(sampleIndex));
         row.OutputErrorSNRdB=errorSnr(clean(sampleIndex),enhanced(sampleIndex)-clean(sampleIndex));
         row.DeltaErrorSNRdB=row.OutputErrorSNRdB-row.InputErrorSNRdB;
     end
     if any(frameIndex)
+        inside=centres(frameIndex)-c.WindowLength/2>=labels.Start(index) & ...
+            centres(frameIndex)+c.WindowLength/2<=labels.End(index);
+        row.BoundaryFrameFraction=1-mean(inside);
         names=["MeanGain","GainBelow1k","Gain1to4k","Gain4to8k"];
         for band=1:numel(bands)
             row.(names(band))=mean(G(bands{band},frameIndex),"all");
@@ -39,7 +45,8 @@ for index=1:height(labels)
             original=abs(S(:,frameIndex)).^2;
             retained=abs(filteredSpeech(:,frameIndex)).^2;
             originalEnergy=sum(weights.*original,"all");
-            row.SpeechRetentiondB=ratioDb(sum(weights.*retained,"all"),originalEnergy);
+            row.WeightedGain=sum(weights.*original.*G(:,frameIndex),"all")/originalEnergy;
+            row.FrameSpeechRetentiondB=ratioDb(sum(weights.*retained,"all"),originalEnergy);
             high=bands{4}; highEnergy=sum(weights(high).*original(high,:),"all");
             if highEnergy>max(originalEnergy*1e-10,realmin)
                 row.HighFrequencyRetentiondB=ratioDb( ...
@@ -67,6 +74,8 @@ globalMetrics=table(inputSNRdB,inputErrorSNR,outputErrorSNR, ...
     result.ReconstructionError,result.DecompositionError, ...
     VariableNames=["ActiveInputSNRdB","InputErrorSNRdB","OutputErrorSNRdB", ...
     "DeltaErrorSNRdB","InputSTOI","OutputSTOI","ReconstructionError","DecompositionError"]);
+globalMetrics.SpeechRetentiondB=ratioDb(sum(speechComponent.^2),sum(clean.^2));
+globalMetrics.ResidualNoiseRatiodB=ratioDb(sum(noiseOut.^2),sum(noiseIn.^2));
 end
 
 function value = errorSnr(signal,errorSignal)
