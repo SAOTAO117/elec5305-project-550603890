@@ -1,0 +1,2 @@
+SampleRate,WindowLength,HopLength,OverlapLength,FFTLength,NoiseSmoothing,GainFloor,CalibrationSeconds,InputSNRdB,NoiseRepeats,RandomSeed,MATLABVersion,STOIAvailable
+16000,512,256,256,512,0.8,0.05,0.5,[-5 0 5 10],2,5305,25.2.0.3177638 (R2025b) Update 5,1
