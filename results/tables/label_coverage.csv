@@ -1,0 +1,6 @@
+Class,TokenCount,TokensWithoutFrames,TokensWithoutInteriorFrames,MinimumDurationMs,MedianDurationMs
+fricatives,104,0,12,29.9999999999998,70.0000000000003
+nasals_approximants,113,0,11,29.9999999999998,70.0000000000001
+silence,43,0,15,14.9999999999997,280
+stops_affricates,97,0,6,29.9999999999994,70.0000000000001
+vowels,192,0,11,29.9999999999998,70.0000000000003
