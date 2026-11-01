@@ -364,8 +364,8 @@
         <p class="eyebrow">ELEC5305</p>
         <h1>Global Noise Reduction versus Phonetic Preservation in Wiener Speech Enhancement</h1>
         <p class="summary">
-          This project examines whether an STFT Wiener filter can improve a whole-utterance
-          noise-reduction score while preserving broad phonetic classes unequally. The MATLAB
+          This project examines whether an STFT Wiener filter can improve whole-utterance
+          error SNR while preserving broad phonetic classes unequally. The MATLAB
           implementation separates desired-speech attenuation from residual noise and compares
           global measurements with phoneme-aligned measurements.
         </p>
@@ -387,23 +387,30 @@
         <div class="two-column">
           <div>
             <p>
-              The MATLAB program runs the full controlled single-channel speech-enhancement
-              experiment. It constructs noisy mixtures, applies an STFT Wiener filter,
-              reconstructs the output and writes reproducible tables, figures and audio examples.
+              The MATLAB implementation uses the standard Wiener gain rule. This project
+              evaluates its behaviour through phoneme-aligned measurements and a paired
+              comparison of 32 ms and 16 ms analysis windows. MATLAB supplies the STFT and
+              inverse STFT; the project code implements gain estimation and evaluation.
             </p>
             <ul>
               <li>STFT analysis and inverse-STFT reconstruction</li>
               <li>Noise-power estimation from a 0.5-second noise-only prefix</li>
-              <li>Wiener gain estimation with temporal smoothing and a gain floor</li>
+              <li>Wiener gain estimated from smoothed mixture power, with a minimum gain of 0.05</li>
               <li>Separate filtering of known clean-speech and noise components</li>
               <li>Phoneme-to-frame mapping using supplied phone boundaries</li>
             </ul>
+            <p>
+              Clean speech and noise components are used only for evaluation. The gain is
+              estimated from the noisy mixture and its noise-only prefix.
+            </p>
           </div>
           <div>
             <p>
               The analysis reports whole-utterance error SNR and STOI, phonetic-class gain,
               desired-speech retention, residual-noise energy, log-spectral distortion and
-              segmental SNR. Results are averaged at speaker level before class comparisons.
+              error SNR over exact phone intervals. Results are averaged at speaker level
+              before class comparisons. Short-time objective intelligibility (STOI) is a
+              predicted intelligibility score, not a listening-test result.
             </p>
             <ul>
               <li>Ten English utterances from ten LibriSpeech speakers</li>
@@ -430,7 +437,8 @@
         <p>
           Each 16 kHz speech recording is mixed with DKITCHEN, PCAFETER and STRAFFIC noise at
           -5, 0, 5 and 10 dB active-speech input SNR. Two fixed noise sections are used for each speech-noise
-          pair. A 512-sample square-root Hann window, 256-sample hop and 512-point FFT are used.
+          pair. The baseline uses a 512-sample (32 ms) square-root periodic Hann window,
+          a 256-sample hop, a 512-point FFT and a mixture-power smoothing coefficient of 0.8.
           Frames are assigned to the phone containing the frame-centre time.
         </p>
         <table>
@@ -444,12 +452,17 @@
           <tbody>
             <tr>
               <td>Speech</td>
-              <td>10 LibriSpeech utterances</td>
+              <td>10 utterances from <a href="https://huggingface.co/datasets/changelinglab/librispeech-segment">LibriSpeech Segment</a></td>
               <td>One utterance from each of ten speakers</td>
             </tr>
             <tr>
+              <td>Phone labels</td>
+              <td>Supplied LibriSpeech Segment alignments</td>
+              <td>Define phone boundaries and the four speech classes</td>
+            </tr>
+            <tr>
               <td>Noise</td>
-              <td>DKITCHEN, PCAFETER, STRAFFIC</td>
+              <td><a href="https://zenodo.org/records/1227121">DEMAND</a>: DKITCHEN, PCAFETER, STRAFFIC</td>
               <td>Kitchen, cafeteria and traffic recordings</td>
             </tr>
             <tr>
@@ -538,7 +551,8 @@
         </p>
         <h3>Window-Length Comparison</h3>
         <p>
-          A paired experiment compared 16 ms and 32 ms windows using identical speech, noise
+          Short phone intervals can contain no complete 32 ms analysis frame. To examine
+          sensitivity to this boundary overlap, a paired experiment compared 16 ms and 32 ms windows using identical speech, noise
           excerpts, noise levels and smoothing time constants. The 16 ms window reduced the
           fraction of frames crossing phone boundaries, but reduced mean speech retention
           in all four classes. Its pooled error-SNR improvement changed by only +0.063 dB
@@ -636,7 +650,7 @@ compareWindows</code></pre>
             <h3>Interpretation</h3>
             <p>
               In this sample, the results show unequal preservation of broad phonetic classes. Global
-              SNR improvement can conceal attenuation of desired speech in specific labelled
+              error-SNR improvement can conceal attenuation of desired speech in specific labelled
               segments. The class difference cannot be explained by a fixed gain ordering alone.
             </p>
           </div>
@@ -650,6 +664,21 @@ compareWindows</code></pre>
             </p>
           </div>
         </div>
+        <p>
+          <a href="https://doi.org/10.1177/23312165241292205">Monir, Magron and Serizel (2024)</a>
+          motivate phoneme-scale evaluation alongside utterance scores. Their multichannel
+          systems differ from this single-channel experiment, so the numerical results are
+          not directly comparable. <a href="https://doi.org/10.1121/1.3619790">Kim and Loizou (2011)</a>
+          distinguish gain-induced attenuation from intelligibility loss. Here, energy loss
+          and a small mean STOI decrease are separate observations; neither establishes
+          impaired recognition of particular phonemes.
+        </p>
+        <p>
+          Further work would add utterances per speaker, inspect short-consonant alignments
+          and use listening tests to assess whether the measured changes affect recognition.
+          The <a href="report/ELEC5305_Project_Report_550603890.pdf">report</a> contains the
+          full literature review, equations and discussion.
+        </p>
       </div>
     </section>
   </main>
