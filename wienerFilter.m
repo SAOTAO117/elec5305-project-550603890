@@ -1,5 +1,11 @@
 function result = wienerFilter(noisy,clean,noise,prefixSamples,c)
 % Apply one STFT Wiener gain and decompose the output into known components.
+assert(isequal(size(noisy),size(clean),size(noise)) && iscolumn(noisy), ...
+    "Signals must be equally sized column vectors.");
+assert(all(isfinite(noisy)) && all(isfinite(clean)) && all(isfinite(noise)), ...
+    "Signals must be finite.");
+assert(norm(noisy-clean-noise)/max(norm(noisy),realmin)<1e-10, ...
+    "Clean and noise components must sum to the mixture.");
 [Y,meta]=analysis(noisy,c);
 [S,cleanMeta]=analysis(clean,c); [N,noiseMeta]=analysis(noise,c);
 assert(isequal(meta.Centres,cleanMeta.Centres,noiseMeta.Centres),"STFT frame mismatch.");
