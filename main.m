@@ -1,16 +1,20 @@
-function main
+function main(windowLength,resultsFolder,makeFigures)
 % Main experiment for phonetic preservation in Wiener speech enhancement.
 
 projectFolder = fileparts(mfilename("fullpath"));
 dataFolder = fullfile(projectFolder,"data");
-resultsFolder = fullfile(projectFolder,"results");
+if nargin < 1, windowLength = 512; end
+if nargin < 2, resultsFolder = fullfile(projectFolder,"results"); end
+if nargin < 3, makeFigures = true; end
 tablesFolder = fullfile(resultsFolder,"tables");
 figuresFolder = fullfile(resultsFolder,"figures");
 audioFolder = fullfile(resultsFolder,"audio");
-c = experimentSettings();
+c = experimentSettings(windowLength);
 
 speechInfo = readtable(fullfile(dataFolder,"speechManifest.csv"),TextType="string");
 noiseInfo = readtable(fullfile(dataFolder,"noiseManifest.csv"),TextType="string");
+assert(numel(unique(speechInfo.speaker_id)) == height(speechInfo), ...
+    "This experiment expects one utterance per speaker.");
 
 speechAudio = cell(height(speechInfo),1);
 phoneLabels = cell(height(speechInfo),1);
@@ -46,6 +50,7 @@ for speechIndex = 1:height(speechInfo)
 
     for noiseIndex = 1:height(noiseInfo)
         requiredLength = prefixLength + numel(cleanSpeech);
+        assert(numel(noiseAudio{noiseIndex}) >= requiredLength,"Noise recording is too short.");
         for repeat = 1:c.NoiseRepeats
             seed = c.RandomSeed + 100000*speechIndex + 1000*noiseIndex + repeat;
             stream = RandStream("mt19937ar",Seed=seed);
@@ -63,6 +68,7 @@ for speechIndex = 1:height(speechInfo)
                 filtered = wienerFilter(noisy,clean,addedNoise,prefixLength,c);
                 measuredSNR = 10*log10(sum(cleanSpeech(activeSpeech).^2) / ...
                     sum((scale*evaluationNoise(activeSpeech)).^2));
+                assert(abs(measuredSNR-snrDb)<1e-10,"Input SNR calibration failed.");
                 [phoneTable,globalTable] = phoneMetrics( ...
                     filtered,labels,measuredSNR,c);
 
@@ -79,6 +85,8 @@ for speechIndex = 1:height(speechInfo)
                 globalTable.Noise = noiseInfo.noise_id(noiseIndex);
                 globalTable.SNRdB = snrDb;
                 globalTable.Repeat = repeat;
+                globalTable.NoiseStartSample = cropStart;
+                globalTable.NoiseScale = scale;
                 globalTable = movevars(globalTable, ...
                     ["SpeakerId","UtteranceId","Noise","SNRdB","Repeat"],Before=1);
 
@@ -108,32 +116,27 @@ end
 writetable(phoneResults,fullfile(tablesFolder,"phone_results.csv"));
 writetable(globalResults,fullfile(tablesFolder,"global_results.csv"));
 writetable(classSummary,fullfile(tablesFolder,"class_summary.csv"));
-plotResults(globalResults,classSummary,speakerResults,figuresFolder);
-plotExample(example.Filtered,example.Labels,figuresFolder,audioFolder,c);
-
-fprintf("Experiment complete. Results saved in:\n%s\n",resultsFolder);
+writetable(speakerResults,fullfile(tablesFolder,"speaker_results.csv"));
+configuration = rmfield(c,"Window");
+configuration.InputSNRdB = string(mat2str(c.InputSNRdB));
+configuration.MATLABVersion = string(version);
+configuration.STOIAvailable = exist("stoi","file")==2;
+writetable(struct2table(configuration),fullfile(tablesFolder,"configuration.csv"));
+analyseResults(phoneResults,globalResults,speakerResults,tablesFolder,figuresFolder,makeFigures);
+if makeFigures
+    plotResults(globalResults,classSummary,speakerResults,figuresFolder);
+    plotExample(example.Filtered,example.Labels,figuresFolder,audioFolder,c);
 end
 
-function c = experimentSettings
-c.SampleRate = 16000;
-c.WindowLength = 512;
-c.HopLength = 256;
-c.OverlapLength = 256;
-c.FFTLength = 512;
-c.Window = sqrt(hann(c.WindowLength,"periodic"));
-c.NoiseSmoothing = 0.8;
-c.GainFloor = 0.05;
-c.CalibrationSeconds = 0.5;
-c.InputSNRdB = [-5 0 5 10];
-c.NoiseRepeats = 2;
-c.RandomSeed = 5305;
+fprintf("Experiment complete. Results saved in:\n%s\n",resultsFolder);
 end
 
 function [summary,speaker] = summarisePhones(phoneResults)
 metrics = ["MeanGain","GainBelow1k","Gain1to4k","Gain4to8k", ...
     "SpeechRetentiondB","HighFrequencyRetentiondB", ...
     "ResidualNoiseRatiodB","MixtureLSDdB","SpeechLSDdB", ...
-    "DeltaErrorSNRdB"];
+    "DeltaErrorSNRdB","FrameSpeechRetentiondB","WeightedGain", ...
+    "BoundaryFrameFraction"];
 
 [group,tokens] = findgroups(phoneResults(:, ...
     ["SpeakerId","UtteranceId","Segment","Noise","SNRdB","Class"]));
@@ -151,88 +154,92 @@ summary.NumberOfSpeakers = splitapply(@numel,speaker.SpeakerId,group);
 for metric = metrics
     summary.(metric+"Mean") = splitapply(@meanFinite,speaker.(metric),group);
     summary.(metric+"SD") = splitapply(@stdFinite,speaker.(metric),group);
+    summary.(metric+"N") = splitapply(@(x)sum(isfinite(x)),speaker.(metric),group);
 end
 end
 
 function plotResults(globalResults,classSummary,speakerResults,figuresFolder)
 speechClasses = ["vowels","nasals_approximants","fricatives","stops_affricates"];
-speechClassNames = ["Vowels","Nasals / approximants","Fricatives","Stops / affricates"];
+speechClassNames = ["Vowels","Nasals and approximants","Fricatives","Stops and affricates"];
 gainClasses = [speechClasses,"silence"];
 gainClassNames = [speechClassNames,"Silence"];
 noises = unique(classSummary.Noise,"stable");
+noiseTitles = replace(noises,["DKITCHEN","PCAFETER","STRAFFIC"], ...
+    ["Kitchen noise (DKITCHEN)","Cafeteria noise (PCAFETER)","Traffic noise (STRAFFIC)"]);
 colours = lines(4);
-
-fig = figure(Visible="off",Color="w",Position=[50 50 1200 480]);
-tiledlayout(1,numel(noises),Padding="compact");
 for i = 1:numel(noises)
-    nexttile;
+    fig = figure(Visible="off",Color="w",Position=[50 50 900 620]);
     selected = speakerResults.Noise == noises(i) & speakerResults.SNRdB == 0;
     groups = categorical(speakerResults.Class(selected),gainClasses,gainClassNames);
     boxchart(groups,speakerResults.MeanGain(selected));
-    ylim([0 1]); grid on; xtickangle(25); title(noises(i),Interpreter="none");
-    ylabel("Mean Wiener gain");
+    ylim([0 1]); grid on; xtickangle(15);
+    title(noiseTitles(i),Interpreter="none");
+    subtitle("0 dB active-speech input SNR; 10 speaker means per class");
+    ylabel("Unweighted mean Wiener gain");
+    savePlot(fig,"gain_"+noises(i));
 end
-applyReportFont(fig);
-exportgraphics(fig,fullfile(figuresFolder,"figure2_gain_by_class.png"),Resolution=200);
-close(fig);
-
-makeClassPlot("SpeechRetentiondBMean","Speech retention (dB)", ...
-    "figure3_retention_vs_snr.png");
-makeClassPlot("MixtureLSDdBMean","Log-spectral distortion (dB)", ...
-    "figure4_spectral_distortion.png");
-
-fig = figure(Visible="off",Color="w",Position=[50 50 1200 480]);
-tiledlayout(1,numel(noises),Padding="compact");
+makeClassPlot("SpeechRetentiondB","Time-domain speech retention (dB)","speech_retention");
+makeClassPlot("MixtureLSDdB","Mixture log-spectral distortion (dB)","spectral_distortion");
+makeClassPlot("DeltaErrorSNRdB","Segmental error-SNR improvement (dB)","segmental_error_snr");
+makeClassPlot("HighFrequencyRetentiondB","4-8 kHz speech retention (dB)","high_frequency_retention");
+[group,globalSpeakers] = findgroups(globalResults(:,["SpeakerId","Noise","SNRdB"]));
+globalSpeakers.Improvement = splitapply(@meanFinite,globalResults.DeltaErrorSNRdB,group);
+group = findgroups(globalSpeakers(:,["Noise","SNRdB"]));
+globalMeans = splitapply(@meanFinite,globalSpeakers.Improvement,group);
+globalSDs = splitapply(@stdFinite,globalSpeakers.Improvement,group);
+globalLimits = [min(0,floor(min(globalMeans-globalSDs))),ceil(max(globalMeans+globalSDs))];
 for i = 1:numel(noises)
-    nexttile;
+    fig = figure(Visible="off",Color="w",Position=[50 50 900 620]);
     rows = globalResults(globalResults.Noise == noises(i),:);
-    [group,snrValues] = findgroups(rows.SNRdB);
-    snrImprovement = splitapply(@meanFinite,rows.DeltaErrorSNRdB,group);
-    [snrValues,order] = sort(snrValues);
-    yyaxis left;
-    plot(snrValues,snrImprovement(order),"ks--",LineWidth=1.3, ...
-        DisplayName="Global SNR improvement");
-    ylabel("Global SNR improvement (dB)"); grid on;
-    yyaxis right; hold on;
-    for k = 1:4
-        selected = classSummary.Noise == noises(i) & classSummary.Class == speechClasses(k);
-        rows = sortrows(classSummary(selected,:),"SNRdB");
-        plot(rows.SNRdB,rows.MixtureLSDdBMean,"o-",Color=colours(k,:), ...
-            DisplayName=speechClassNames(k));
-    end
-    hold off; xlabel("Input SNR (dB)");
-    ylabel("Phoneme-class distortion (dB)");
-    title(noises(i),Interpreter="none");
-    if i == 1, legend(Location="best"); end
+    [group,speakers] = findgroups(rows(:,["SpeakerId","SNRdB"]));
+    speakers.Improvement = splitapply(@meanFinite,rows.DeltaErrorSNRdB,group);
+    [group,snrValues] = findgroups(speakers.SNRdB);
+    means = splitapply(@meanFinite,speakers.Improvement,group);
+    deviations = splitapply(@stdFinite,speakers.Improvement,group);
+    errorbar(snrValues,means,deviations,"ko-",LineWidth=1.5,CapSize=12);
+    xlabel("Active-speech input SNR (dB)"); xticks([-5 0 5 10]);
+    ylabel("Global error-SNR improvement (dB)"); grid on;
+    ylim(globalLimits); xlim([-6 11]);
+    title(noiseTitles(i),Interpreter="none");
+    subtitle("Mean and SD across 10 speakers");
+    savePlot(fig,"global_error_snr_"+noises(i));
 end
-applyReportFont(fig);
-exportgraphics(fig,fullfile(figuresFolder,"figure1_global_vs_phonetic.png"),Resolution=200);
-close(fig);
-
     function makeClassPlot(fieldName,yLabel,fileName)
-        fig = figure(Visible="off",Color="w",Position=[50 50 1200 480]);
-        tiledlayout(1,numel(noises),Padding="compact");
+        lower = classSummary.(fieldName+"Mean")-classSummary.(fieldName+"SD");
+        upper = classSummary.(fieldName+"Mean")+classSummary.(fieldName+"SD");
+        keep = ismember(classSummary.Class,speechClasses);
+        limits = [floor(min(lower(keep))),ceil(max(upper(keep)))];
+        if limits(1)==limits(2), limits=limits+[-1 1]; end
         for noiseIndex = 1:numel(noises)
-            nexttile; hold on;
+            fig = figure(Visible="off",Color="w",Position=[50 50 900 620]);
+            hold on;
             for classIndex = 1:4
                 selected = classSummary.Noise == noises(noiseIndex) & ...
                     classSummary.Class == speechClasses(classIndex);
                 rows = sortrows(classSummary(selected,:),"SNRdB");
-                plot(rows.SNRdB,rows.(fieldName),"o-", ...
-                    Color=colours(classIndex,:),DisplayName=speechClassNames(classIndex));
+                offset = (classIndex-2.5)*0.12;
+                errorbar(rows.SNRdB+offset,rows.(fieldName+"Mean"),rows.(fieldName+"SD"),"o-", ...
+                    LineWidth=1.3,CapSize=8,Color=colours(classIndex,:), ...
+                    DisplayName=speechClassNames(classIndex));
             end
-            hold off; grid on; xlabel("Input SNR (dB)"); ylabel(yLabel);
-            title(noises(noiseIndex),Interpreter="none");
-            if noiseIndex == 1, legend(Location="best"); end
+            hold off; grid on; xlabel("Active-speech input SNR (dB)"); ylabel(yLabel);
+            xticks([-5 0 5 10]); xlim([-6 11]); ylim(limits);
+            title(noiseTitles(noiseIndex),Interpreter="none");
+            subtitle("Mean and SD across 10 speakers");
+            legend(Location="southoutside",NumColumns=2);
+            savePlot(fig,fileName+"_"+noises(noiseIndex));
         end
+    end
+    function savePlot(fig,name)
         applyReportFont(fig);
-        exportgraphics(fig,fullfile(figuresFolder,fileName),Resolution=200);
+        exportgraphics(fig,fullfile(figuresFolder,name+".png"),Resolution=200);
         close(fig);
     end
 end
 
 function applyReportFont(fig)
 set(findall(fig,"-property","FontName"),"FontName","Times New Roman");
+set(findall(fig,"Type","axes"),"FontSize",15);
 end
 
 function value = meanFinite(values)
