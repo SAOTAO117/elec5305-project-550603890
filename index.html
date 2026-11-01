@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="ELEC5305 project progress on phonetic preservation in Wiener speech enhancement.">
-  <title>ELEC5305 Project Work - Weitao Shi</title>
+  <meta name="description" content="MATLAB implementation, experimental results and report on phonetic preservation in Wiener speech enhancement.">
+  <title>ELEC5305 Project - Weitao Shi</title>
   <style>
     :root {
       --ink: #181818;
@@ -246,9 +246,25 @@
     }
 
     code {
-      font-family: Consolas, "Courier New", monospace;
+      font-family: "Times New Roman", Times, serif;
       font-size: 0.88em;
     }
+
+    pre {
+      padding: 14px 18px;
+      border-left: 3px solid var(--line);
+      white-space: pre-wrap;
+    }
+
+    .audio-examples {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .audio-examples label { display: block; margin-bottom: 8px; }
+    audio { display: block; width: 100%; }
 
     .file-list {
       margin-top: 20px;
@@ -305,6 +321,7 @@
       h1 { font-size: 34px; }
       .summary { font-size: 19px; }
       .two-column,
+      .audio-examples,
       .result-list { grid-template-columns: 1fr; gap: 18px; }
       .metrics { grid-template-columns: 1fr 1fr; }
       .metric:nth-child(2) { border-right: 0; }
@@ -330,13 +347,13 @@
 <body>
   <header class="site-header">
     <div class="page-width header-row">
-      <p class="course">ELEC5305 Project Work</p>
+      <p class="course">ELEC5305 Project</p>
       <nav aria-label="Project navigation">
-        <a href="#progress">Progress</a>
-        <a href="#results">Preliminary results</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#audio">Audio</a>
         <a href="#files">Code and data</a>
-        <a href="https://github.com/SAOTAO117/elec5305-project-550603890">GitHub Repository</a>
-        <a href="proposal.html">Proposal</a>
+        <a href="report/ELEC5305_Project_Report_550603890.pdf">Report</a>
       </nav>
     </div>
   </header>
@@ -344,7 +361,7 @@
   <main>
     <div class="intro">
       <div class="page-width">
-        <p class="eyebrow">ELEC5305 project progress</p>
+        <p class="eyebrow">ELEC5305</p>
         <h1>Global Noise Reduction versus Phonetic Preservation in Wiener Speech Enhancement</h1>
         <p class="summary">
           This project examines whether an STFT Wiener filter can improve a whole-utterance
@@ -355,14 +372,18 @@
         <div class="project-meta">
           <span><strong>Student:</strong> Weitao Shi</span>
           <span><strong>SID:</strong> 550603890</span>
-          <span><strong>Last updated:</strong> 1 October 2026</span>
+          <span><strong>Updated:</strong> 1 November 2026</span>
+        </div>
+        <div class="actions">
+          <a class="primary-link" href="report/ELEC5305_Project_Report_550603890.pdf">Read report</a>
+          <a href="https://github.com/SAOTAO117/elec5305-project-550603890">GitHub Repository</a>
         </div>
       </div>
     </div>
 
-    <section id="progress">
+    <section id="method">
       <div class="page-width">
-        <h2>Work Completed</h2>
+        <h2>Method</h2>
         <div class="two-column">
           <div>
             <p>
@@ -380,7 +401,7 @@
           </div>
           <div>
             <p>
-              The analysis reports whole-utterance SNR and STOI, phonetic-class gain,
+              The analysis reports whole-utterance error SNR and STOI, phonetic-class gain,
               desired-speech retention, residual-noise energy, log-spectral distortion and
               segmental SNR. Results are averaged at speaker level before class comparisons.
             </p>
@@ -408,7 +429,7 @@
         <h2>Experiment Setup</h2>
         <p>
           Each 16 kHz speech recording is mixed with DKITCHEN, PCAFETER and STRAFFIC noise at
-          -5, 0, 5 and 10 dB input SNR. Two fixed noise sections are used for each speech-noise
+          -5, 0, 5 and 10 dB active-speech input SNR. Two fixed noise sections are used for each speech-noise
           pair. A 512-sample square-root Hann window, 256-sample hop and 512-point FFT are used.
           Frames are assigned to the phone containing the frame-centre time.
         </p>
@@ -429,7 +450,7 @@
             <tr>
               <td>Noise</td>
               <td>DKITCHEN, PCAFETER, STRAFFIC</td>
-              <td>Stationary, public-space and traffic conditions</td>
+              <td>Kitchen, cafeteria and traffic recordings</td>
             </tr>
             <tr>
               <td>Input SNR</td>
@@ -448,39 +469,41 @@
 
     <section id="results">
       <div class="page-width">
-        <h2>Preliminary Results</h2>
+          <h2>Results</h2>
         <p class="result-summary">
           Across the 240 mixtures, whole-utterance error SNR improved by 6.18 dB on average.
           Mean STOI changed from 0.8432 before filtering to 0.8385 after filtering, so the global
-          SNR improvement did not produce an intelligibility improvement. Desired-speech
+          SNR improvement did not produce an improvement in this objective intelligibility score. Desired-speech
           decomposition also showed larger low-SNR energy losses for fricatives and stops or
           affricates than for vowels and nasals or approximants.
         </p>
 
         <figure>
-          <img src="results/figures/figure1_global_vs_phonetic.png"
-               alt="Global SNR improvement and phonetic-class distortion across SNR and noise type">
+          <img src="results/figures/global_error_snr_PCAFETER.png"
+               alt="Whole-utterance error-SNR improvement in PCAFETER noise, with speaker standard deviations">
           <figcaption>
-            <strong>Figure 1.</strong> Whole-utterance SNR improvement is shown with phonetic-class
-            distortion. A favourable global value can coexist with substantial class-level change.
+            <strong>Figure 1.</strong> Whole-utterance error-SNR improvement in PCAFETER noise.
+            Noise excerpts are averaged within speaker; error bars show SD across ten speakers.
           </figcaption>
         </figure>
 
         <figure>
-          <img src="results/figures/figure3_retention_vs_snr.png"
-               alt="Desired-speech retention by phonetic class and input SNR">
+          <img src="results/figures/speech_retention_PCAFETER.png"
+               alt="Exact phone-interval speech retention in PCAFETER noise, with speaker standard deviations">
           <figcaption>
-            <strong>Figure 2.</strong> Desired-speech retention improves as input SNR increases,
-            but class differences are largest in severe noise.
+            <strong>Figure 2.</strong> Desired-speech energy retention over exact labelled sample
+            intervals in PCAFETER noise. More negative values indicate greater attenuation.
+            Error bars show speaker SD; horizontal offsets separate markers at the same input SNR.
           </figcaption>
         </figure>
 
         <figure>
-          <img src="results/figures/figure4_spectral_distortion.png"
-               alt="Log-spectral distortion by phonetic class and input SNR">
+          <img src="results/figures/speech_noise_tradeoff.png"
+               alt="Time-domain speech and noise retention for four phonetic classes">
           <figcaption>
-            <strong>Figure 3.</strong> Log-spectral distortion decreases at higher input SNR and
-            depends on both phonetic class and noise environment.
+            <strong>Figure 3.</strong> Speech and noise components after applying the same gain
+            estimated from the mixture. Conditions are averaged within each speaker before
+            calculating the mean and SD across speakers.
           </figcaption>
         </figure>
 
@@ -492,18 +515,72 @@
           </div>
           <div class="result-item">
             <strong>Speech preservation</strong>
-            At -5 dB, mean desired-speech retention was -2.42 dB for vowels and approximately
-            -4.4 dB for fricatives and stops or affricates.
+            Averaging conditions within speaker, mean time-domain speech retention was
+            -1.24 dB for vowels, -1.48 dB for nasals or approximants, -2.53 dB for fricatives
+            and -2.51 dB for stops or affricates.
           </div>
           <div class="result-item">
             <strong>Noise dependence</strong>
-            PCAFETER produced the smallest SNR improvement and the clearest mean STOI decrease,
-            consistent with its speech-like and time-varying content.
+            PCAFETER produced the smallest mean error-SNR improvement and the largest mean
+            STOI decrease among these recordings. This comparison does not isolate which
+            noise properties caused the difference.
           </div>
           <div class="result-item">
             <strong>Interpretation</strong>
             Mean Wiener gain alone does not explain class preservation; speech energy, noise and
             gain must be considered jointly across time and frequency.
+          </div>
+        </div>
+        <p>
+          Separate plots for all three noises, frequency-band measurements and paired class
+          contrasts are available in the <a href="https://github.com/SAOTAO117/elec5305-project-550603890/tree/main/results">results folder</a>. These 240 mixtures represent repeated
+          conditions on ten speakers, not 240 independent speech samples.
+        </p>
+        <h3>Window-Length Comparison</h3>
+        <p>
+          A paired experiment compared 16 ms and 32 ms windows using identical speech, noise
+          excerpts, noise levels and smoothing time constants. The 16 ms window reduced the
+          fraction of frames crossing phone boundaries, but reduced mean speech retention
+          in all four classes. Its pooled error-SNR improvement changed by only +0.063 dB
+          (95% speaker-bootstrap interval: -0.043 to +0.166 dB), while STOI changed by
+          -0.0093 relative to the 32 ms configuration. The 32 ms window remains the baseline.
+        </p>
+        <figure>
+          <img src="results/window_comparison/window_retention_change.png"
+               alt="Paired speech-retention changes from a 32 ms to a 16 ms window">
+          <figcaption>
+            <strong>Figure 4.</strong> Changes are 16 ms minus 32 ms. Intervals resample the
+            ten paired speaker means; they are exploratory and unadjusted for multiple comparisons.
+            The comparison also changes the hop and true frequency resolution.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="audio">
+      <div class="page-width">
+        <h2>Speech Example</h2>
+        <p>
+          Utterance 5338-24640-0003 is mixed with cafeteria noise at 0 dB active-speech
+          input SNR. The same playback scale is applied to all three recordings.
+          The gain map aligns the filtering operation with the phonetic classes.
+        </p>
+        <figure>
+          <img src="results/figures/example_gain.png" alt="Wiener gain from zero to eight kilohertz with a time-aligned phonetic-class strip">
+          <figcaption><strong>Figure 5.</strong> Time-frequency gain for the audio example. A gain near zero indicates stronger suppression.</figcaption>
+        </figure>
+        <div class="audio-examples">
+          <div>
+            <label for="audio-clean">Clean speech</label>
+            <audio id="audio-clean" controls preload="none" src="results/audio/example_clean.wav">Download <a href="results/audio/example_clean.wav">clean speech</a>.</audio>
+          </div>
+          <div>
+            <label for="audio-noisy">Noisy speech</label>
+            <audio id="audio-noisy" controls preload="none" src="results/audio/example_noisy.wav">Download <a href="results/audio/example_noisy.wav">noisy speech</a>.</audio>
+          </div>
+          <div>
+            <label for="audio-enhanced">Enhanced speech</label>
+            <audio id="audio-enhanced" controls preload="none" src="results/audio/example_enhanced.wav">Download <a href="results/audio/example_enhanced.wav">enhanced speech</a>.</audio>
           </div>
         </div>
       </div>
@@ -517,40 +594,59 @@
           phone labels, result tables, figures and audio examples. Running <code>main</code> from
           the repository folder rebuilds the 240 mixtures and regenerates the results.
         </p>
+        <p>
+          Download the <a href="https://github.com/SAOTAO117/elec5305-project-550603890/archive/refs/heads/main.zip">complete project</a>
+          and open the extracted folder in MATLAB. The code was tested with MATLAB R2025b
+          and Signal Processing Toolbox; Audio Toolbox is needed for STOI.
+        </p>
+        <pre><code>main
+validateDesign
+compareWindows</code></pre>
+        <p>
+          <code>main</code> runs the 32 ms baseline, <code>validateDesign</code> checks the
+          calculations, and <code>compareWindows</code> runs the paired 32 ms and 16 ms experiments.
+          All required audio and labels are included.
+        </p>
         <ul class="file-list">
           <li><code>main.m</code><span>Defines the experiment and writes the result files.</span></li>
           <li><code>wienerFilter.m</code><span>Performs STFT Wiener filtering and component decomposition.</span></li>
           <li><code>phoneMetrics.m</code><span>Calculates phoneme-aligned measurements.</span></li>
           <li><code>loadPhoneLabels.m</code><span>Reads and validates the phone boundaries.</span></li>
+          <li><code>compareWindows.m</code><span>Runs the paired window-length experiment.</span></li>
+          <li><code>validateDesign.m</code><span>Checks reconstruction, decomposition and metric calculations.</span></li>
           <li><code>data/</code><span>Contains selected speech, noise, labels and manifest files.</span></li>
           <li><code>results/</code><span>Contains CSV tables, figures and WAV examples.</span></li>
+          <li><code>report/</code><span>Project report.</span></li>
         </ul>
         <div class="actions">
           <a class="primary-link" href="https://github.com/SAOTAO117/elec5305-project-550603890">
             GitHub Repository
           </a>
-          <a href="proposal.html">Project Proposal</a>
+          <a href="report/ELEC5305_Project_Report_550603890.pdf">Project report</a>
+          <a href="https://github.com/SAOTAO117/elec5305-project-550603890/blob/main/design.md">Experimental Method</a>
         </div>
       </div>
     </section>
 
     <section>
       <div class="page-width">
-        <h2>Interpretation and Next Steps</h2>
+        <h2>Discussion</h2>
         <div class="two-column">
           <div>
             <h3>Interpretation</h3>
             <p>
-              The results support unequal preservation of broad phonetic classes. Global
+              In this sample, the results show unequal preservation of broad phonetic classes. Global
               SNR improvement can conceal attenuation of desired speech in specific labelled
               segments. The class difference cannot be explained by a fixed gain ordering alone.
             </p>
           </div>
           <div>
-            <h3>Next steps</h3>
+            <h3>Limitations</h3>
             <p>
-              Next, I will check parameter sensitivity, refine the class-level interpretation,
-              complete the written report and prepare the short project demonstration.
+              The sample contains one utterance per speaker and one recording per noise
+              environment. Supplied phone alignments were structurally validated rather
+              than manually reannotated. Energy measurements and STOI do not establish
+              perceptual loss of particular speech sounds without listening tests.
             </p>
           </div>
         </div>
