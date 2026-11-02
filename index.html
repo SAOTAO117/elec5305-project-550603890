@@ -265,6 +265,7 @@
 
     .audio-examples label { display: block; margin-bottom: 8px; }
     audio { display: block; width: 100%; }
+    video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; }
 
     .file-list {
       margin-top: 20px;
@@ -352,6 +353,7 @@
         <a href="#method">Method</a>
         <a href="#results">Results</a>
         <a href="#audio">Audio</a>
+        <a href="#presentation">Video</a>
         <a href="#files">Code and data</a>
         <a href="report/ELEC5305_Project_Report_550603890.pdf">Report</a>
       </nav>
@@ -372,10 +374,11 @@
         <div class="project-meta">
           <span><strong>Student:</strong> Weitao Shi</span>
           <span><strong>SID:</strong> 550603890</span>
-          <span><strong>Updated:</strong> 1 November 2026</span>
+          <span><strong>Updated:</strong> 2 November 2026</span>
         </div>
         <div class="actions">
           <a class="primary-link" href="report/ELEC5305_Project_Report_550603890.pdf">Read report</a>
+          <a href="#presentation">Watch video</a>
           <a href="https://github.com/SAOTAO117/elec5305-project-550603890">GitHub Repository</a>
         </div>
       </div>
@@ -600,6 +603,21 @@
       </div>
     </section>
 
+    <section id="presentation">
+      <div class="page-width">
+        <h2>Video Presentation</h2>
+        <p>Code walkthrough and demonstration of Wiener speech enhancement.</p>
+        <video controls preload="metadata" playsinline aria-label="ELEC5305 project video presentation">
+          <source src="video/ELEC5305_Presentation_550603890.mp4" type="video/mp4">
+          <a href="video/ELEC5305_Presentation_550603890.mp4">Download video</a>
+        </video>
+        <div class="actions">
+          <a href="presentation/ELEC5305_Presentation_550603890.pptx" download>Download slides</a>
+          <a href="video/ELEC5305_Presentation_550603890.mp4" download>Download video</a>
+        </div>
+      </div>
+    </section>
+
     <section id="files">
       <div class="page-width">
         <h2>Code, Data and Reproduction</h2>
@@ -631,6 +649,8 @@ compareWindows</code></pre>
           <li><code>data/</code><span>Contains selected speech, noise, labels and manifest files.</span></li>
           <li><code>results/</code><span>Contains CSV tables, figures and WAV examples.</span></li>
           <li><code>report/</code><span>Project report.</span></li>
+          <li><code>presentation/</code><span>Presentation slides.</span></li>
+          <li><code>video/</code><span>Recorded presentation.</span></li>
         </ul>
         <div class="actions">
           <a class="primary-link" href="https://github.com/SAOTAO117/elec5305-project-550603890">

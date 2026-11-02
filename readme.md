@@ -8,7 +8,9 @@ environmental noises, then compares whole-utterance measurements with results
 for four phoneme groups.
 
 [Project site](https://saotao117.github.io/elec5305-project-550603890/) ·
-[Project report](report/ELEC5305_Project_Report_550603890.pdf)
+[Project report](report/ELEC5305_Project_Report_550603890.pdf) ·
+[Video](https://saotao117.github.io/elec5305-project-550603890/#presentation) ·
+[Slides](presentation/ELEC5305_Presentation_550603890.pptx)
 
 ## Project files
 
@@ -30,6 +32,8 @@ for four phoneme groups.
 - `results/audio` contains the clean, noisy and enhanced examples.
 - `results/window_comparison` contains the 16 ms results and paired comparison with the 32 ms baseline.
 - `report` contains the project report.
+- `presentation` contains the presentation slides.
+- `video` contains the recorded presentation.
 
 ## Requirements
 
